@@ -1,0 +1,329 @@
+/* Narrator AI Assistant Styles */
+
+/* Floating Action Button */
+.narrator-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    z-index: 8500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.narrator-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.narrator-fab:active {
+    transform: translateY(0);
+}
+
+/* Narrator Panel */
+.narrator-panel {
+    position: fixed;
+    right: -420px;
+    top: 0;
+    bottom: 0;
+    width: 400px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+    z-index: 8600;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+}
+
+.narrator-panel.open {
+    right: 0;
+}
+
+/* Resize handle (desktop only) */
+.resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: ew-resize;
+    background: transparent;
+    transition: background 0.2s;
+}
+
+.resize-handle:hover {
+    background: rgba(102, 126, 234, 0.3);
+}
+
+/* Header */
+.narrator-header {
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.narrator-header span {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.narrator-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.narrator-header .btn-close:hover {
+    opacity: 1;
+}
+
+/* Body */
+.narrator-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 1.5rem;
+}
+
+/* API Key Step */
+#apiKeyStep {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#apiKeyStep label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+#apiKeyStep .form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+}
+
+#apiKeyStep .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#apiKeyStep .btn {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+}
+
+#apiKeyStep .btn-success {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+#apiKeyStep .btn-success:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+}
+
+#apiKeyStep .btn-outline-secondary {
+    border-color: #ddd;
+    color: #666;
+}
+
+#apiKeyStep .btn-outline-secondary:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+}
+
+/* Chat Box */
+.chat-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1rem;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-right: 0.5rem;
+}
+
+/* Custom scrollbar */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Chat Message */
+.chat-message {
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    max-width: 85%;
+    word-wrap: break-word;
+    line-height: 1.5;
+}
+
+.chat-message.user {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.chat-message.ai {
+    background: #f0f0f0;
+    color: #333;
+    align-self: flex-start;
+}
+
+/* Typing indicator */
+.chat-message.typing {
+    padding: 1rem;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #999;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-8px);
+    }
+}
+
+/* Chat Input */
+.chat-input {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.chat-input textarea {
+    flex: 1;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    resize: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    max-height: 120px;
+    transition: border-color 0.2s;
+}
+
+.chat-input textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chat-input .btn {
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.chat-input .btn:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .narrator-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+    }
+    
+    .narrator-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .narrator-panel.open {
+        right: 0;
+    }
+    
+    .resize-handle {
+        display: none;
+    }
+    
+    .narrator-body {
+        padding: 1rem;
+    }
+    
+    .chat-message {
+        max-width: 90%;
+    }
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+    .narrator-fab,
+    .narrator-panel {
+        transition: none;
+    }
+    
+    .typing-dots span {
+        animation: none;
+        opacity: 0.6;
+    }
+}

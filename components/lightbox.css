@@ -1,0 +1,148 @@
+/* Lightbox component styles */
+
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lightbox.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.lb-inner {
+    position: relative;
+    width: min(94vw, 1200px);
+    height: min(90vh, 800px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lb-img,
+.lb-video {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    object-fit: contain;
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.6);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0 0 3px 0;
+}
+
+.close-btn:hover {
+    background: rgba(255,80,80,0.8);
+}
+
+/* Navigation arrows */
+.lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0.9;
+    line-height: 1;
+    padding: 0 0 4px 0;
+}
+
+.lb-nav:hover {
+    background: rgba(255,255,255,0.3);
+    opacity: 1;
+}
+
+.lb-prev { left: 30px; }
+.lb-next { right: 30px; }
+
+.lb-nav:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Counter */
+.lb-counter {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .lb-nav {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+        padding: 0 0 3px 0;
+    }
+    
+    .lb-prev { left: 10px; }
+    .lb-next { right: 10px; }
+    
+    .close-btn {
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+        padding: 0 0 2px 0;
+    }
+    
+    .lb-counter {
+        bottom: 20px;
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+}

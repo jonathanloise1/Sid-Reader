@@ -1,0 +1,91 @@
+﻿/* Minimal global theme for Smṛti */
+
+/* General */
+body {
+    background: #fdfaf6; /* carta chiara, calda */
+    font-family: system-ui, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cards */
+.card {
+    border-radius: 1rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+.card-title {
+    font-weight: 600;
+    color: #222;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 2rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0.4rem 1rem;
+}
+
+/* Secondary outline */
+.btn-outline-secondary {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+    .btn-outline-secondary:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #111;
+    }
+
+/* Success (publish) */
+.btn-success {
+    background-color: #5c8d72; /* verde tenue, meno aggressivo */
+    border-color: #5c8d72;
+}
+
+    .btn-success:hover {
+        background-color: #4a725c;
+        border-color: #436955;
+    }
+
+/* Fixed home button */
+.home-button {
+    bottom: 1rem;
+    right: 1rem;
+    opacity: 0.7;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.85rem;
+    color: #333;
+    text-decoration: none;
+}
+
+    .home-button:hover {
+        background: rgba(255, 255, 255, 1);
+        opacity: 1;
+    }
+
+/* Titles */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1rem;
+}
+
+/* Containers */
+.container, .card-body {
+    border-radius: 1rem;
+}
