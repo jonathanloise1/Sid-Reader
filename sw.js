@@ -1,19 +1,25 @@
 // Enhanced Service Worker: precache core assets and runtime cache for thumbs, images and on-demand media
-const CACHE_STATIC = 'sid-reader-static-v1';
+const CACHE_STATIC = 'sid-reader-static-v3';
 const CACHE_THUMBS = 'sid-reader-thumbs-v1';
 const CACHE_MEDIA = 'sid-reader-media-v1';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
-  '/reader.core.css',
-  '/reader.core.js',
+  '/vendor/bootstrap.min.css',
+  '/core/reader.css',
+  '/core/reader.js',
   '/stories.reader.js',
   '/sw.js'
 ];
 
 // Basic install/activate
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_STATIC).then(cache => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE_STATIC)
+      // Cache each URL individually so one missing file does not abort the whole install
+      .then(cache => Promise.all(PRECACHE_URLS.map(u => cache.add(u).catch(() => null))))
+      .then(() => self.skipWaiting())
+  );
 });
 self.addEventListener('activate', (event) => { event.waitUntil(clients.claim()); });
 
