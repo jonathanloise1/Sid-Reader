@@ -111,7 +111,8 @@
             // Register service worker if supported (client-only environment)
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+                    // Relative path so it works under a sub-path (e.g. GitHub Pages /Sid-Reader/)
+                    navigator.serviceWorker.register('sw.js').catch(()=>{});
                 });
             }
         </script>

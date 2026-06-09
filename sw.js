@@ -2,14 +2,16 @@
 const CACHE_STATIC = 'sid-reader-static-v3';
 const CACHE_THUMBS = 'sid-reader-thumbs-v1';
 const CACHE_MEDIA = 'sid-reader-media-v1';
+// Relative paths (resolved against the SW scope) so caching works under a
+// sub-path such as GitHub Pages /Sid-Reader/ as well as at the domain root.
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/vendor/bootstrap.min.css',
-  '/core/reader.css',
-  '/core/reader.js',
-  '/stories.reader.js',
-  '/sw.js'
+  './',
+  './index.html',
+  './vendor/bootstrap.min.css',
+  './core/reader.css',
+  './core/reader.js',
+  './stories.reader.js',
+  './sw.js'
 ];
 
 // Basic install/activate
