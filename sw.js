@@ -23,7 +23,16 @@ self.addEventListener('install', (event) => {
       .then(() => self.skipWaiting())
   );
 });
-self.addEventListener('activate', (event) => { event.waitUntil(clients.claim()); });
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    // Self-healing: drop any cache that isn't part of the current version set,
+    // so old/stale caches on returning visitors' devices are purged automatically.
+    const keep = [CACHE_STATIC, CACHE_THUMBS, CACHE_MEDIA];
+    const names = await caches.keys();
+    await Promise.all(names.map(n => keep.includes(n) ? null : caches.delete(n)));
+    await clients.claim();
+  })());
+});
 
 // Message API: client can request cache/evict specific URLs
 self.addEventListener('message', (ev) => {
