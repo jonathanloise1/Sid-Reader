@@ -5,6 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sid - E-Book Reader</title>
 
+    <!-- On-screen debug console (activate by adding ?debug=1 to the URL). -->
+    <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(location.search);
+        if (params.get('debug') !== '1') return;
+      } catch (e) { return; }
+
+      var logs = [];
+      function render() {
+        var box = document.getElementById('__dbg');
+        if (!box) return;
+        box.textContent = logs.slice(-200).join('\n');
+        box.scrollTop = box.scrollHeight;
+      }
+      function add(kind, args) {
+        var parts = [];
+        for (var i = 0; i < args.length; i++) {
+          var a = args[i];
+          try {
+            parts.push(typeof a === 'object' ? JSON.stringify(a) : String(a));
+          } catch (e) { parts.push(String(a)); }
+        }
+        logs.push('[' + kind + '] ' + parts.join(' '));
+        render();
+      }
+
+      function mountUI() {
+        if (document.getElementById('__dbg')) return;
+        var box = document.createElement('pre');
+        box.id = '__dbg';
+        box.style.cssText = 'position:fixed;left:0;right:0;bottom:0;max-height:45vh;overflow:auto;margin:0;padding:8px;z-index:2147483647;background:rgba(0,0,0,.88);color:#0f0;font:11px/1.4 monospace;white-space:pre-wrap;word-break:break-word;border-top:2px solid #0f0;';
+        var bar = document.createElement('div');
+        bar.style.cssText = 'position:fixed;right:8px;bottom:calc(45vh + 6px);z-index:2147483647;display:flex;gap:6px;';
+        var copy = document.createElement('button');
+        copy.textContent = 'Copia';
+        copy.style.cssText = 'padding:6px 10px;font:12px monospace;background:#0a0;color:#fff;border:0;border-radius:6px;';
+        copy.onclick = function () {
+          var t = logs.join('\n');
+          if (navigator.clipboard) navigator.clipboard.writeText(t).then(function(){copy.textContent='Copiato!';},function(){});
+          else { var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); copy.textContent='Copiato!'; }
+        };
+        bar.appendChild(copy);
+        document.body.appendChild(bar);
+        document.body.appendChild(box);
+        render();
+      }
+      if (document.body) mountUI();
+      else document.addEventListener('DOMContentLoaded', mountUI);
+
+      window.onerror = function (msg, src, line, col, err) {
+        add('JS-ERROR', [msg + ' @ ' + (src || '?') + ':' + line + ':' + col + (err && err.stack ? '\n' + err.stack : '')]);
+      };
+      window.addEventListener('unhandledrejection', function (e) {
+        var r = e && e.reason;
+        add('PROMISE', [r && r.stack ? r.stack : (r && r.message ? r.message : String(r))]);
+      });
+      window.addEventListener('error', function (e) {
+        if (e && e.target && (e.target.src || e.target.href)) {
+          add('LOAD-FAIL', [(e.target.tagName || '?') + ' ' + (e.target.src || e.target.href)]);
+        }
+      }, true);
+
+      ['log', 'warn', 'error', 'info'].forEach(function (k) {
+        var orig = console[k] ? console[k].bind(console) : function () {};
+        console[k] = function () { add(k.toUpperCase(), arguments); orig.apply(null, arguments); };
+      });
+
+      add('DEBUG', ['console attiva — UA: ' + navigator.userAgent]);
+    })();
+    </script>
+
     <!-- Bootstrap (self-hosted: no CDN dependency, works offline / behind blockers) -->
     <link rel="stylesheet" href="vendor/bootstrap.min.css" />
 
