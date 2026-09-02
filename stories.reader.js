@@ -3,11 +3,37 @@
 (function () {
   const DEFAULT_GATEWAYS = [
     "https://ipfs.io",
-    "https://dweb.link",
-    "https://cloudflare-ipfs.com"
+    "https://dweb.link"
   ];
 
+  const FETCH_TIMEOUT_MS = 15000;
+
+  // Link shorteners / social apps (e.g. Instagram link-in-bio) may re-percent-encode
+  // an already-encoded URL, turning "https%3A%2F%2F..." into "https%25253A...".
+  // Decode repeatedly until stable so we recover the original value.
+  function deepDecode(value) {
+    if (!value) return value;
+    let out = String(value);
+    for (let i = 0; i < 4; i++) {
+      let dec;
+      try { dec = decodeURIComponent(out); } catch (e) { break; }
+      if (dec === out) break;
+      out = dec;
+    }
+    return out.trim();
+  }
+
+  // Returns a valid absolute http(s) URL or null (mangled values are discarded
+  // so the caller can fall back to the default gateways).
+  function sanitizeHttpUrl(value) {
+    const v = deepDecode(value);
+    return v && /^https?:\/\//i.test(v) ? v : null;
+  }
+
   function showError(message) {
+    // The splash overlays everything (z-index 8000): hide it so the error is visible.
+    const splash = document.getElementById("splash");
+    if (splash) splash.classList.add("hidden");
     const root = document.getElementById("readerRoot") || document.body;
     const box = document.createElement("div");
     box.style.background = "#ffe8e6";
@@ -20,26 +46,33 @@
     root.prepend(box);
   }
 
-  function isIpfsUrl(url) {
-    return /\/ipfs\//i.test(url);
+  // fetch with a hard timeout: a blackholed gateway (filtered DNS, dead host)
+  // can otherwise hang for minutes and the splash looks frozen.
+  function fetchWithTimeout(url, init) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    const opts = Object.assign({}, init, { signal: ctrl.signal });
+    return fetch(url, opts).finally(() => clearTimeout(timer));
   }
 
   async function fetchWithGateways(url, gateways, init) {
+    // Extract the "/ipfs/..." portion so fallback gateways always get a clean
+    // path, even when the original URL was mangled upstream.
+    const ipfsIdx = url.search(/\/ipfs\//i);
+
     // If not an IPFS-style URL, just fetch once
-    if (!isIpfsUrl(url) || !Array.isArray(gateways) || gateways.length === 0) {
-      const resp = await fetch(url, init);
+    if (ipfsIdx < 0 || !Array.isArray(gateways) || gateways.length === 0) {
+      const resp = await fetchWithTimeout(url, init);
       if (!resp.ok) throw new Error(`Fetch failed ${resp.status}`);
       return resp;
     }
 
-    // Replace the origin/gateway portion and try sequentially
-    const m = url.match(/^(https?:\/\/[^/]+)(.*)$/i);
-    const path = m ? m[2] : url;
+    const path = url.slice(ipfsIdx);
     let lastError;
     for (const gw of gateways) {
       const tryUrl = `${gw.replace(/\/$/, "")}${path}`;
       try {
-        const resp = await fetch(tryUrl, init);
+        const resp = await fetchWithTimeout(tryUrl, init);
         if (resp.ok) return resp;
         lastError = new Error(`Fetch failed ${resp.status} @ ${tryUrl}`);
       } catch (e) {
@@ -58,9 +91,11 @@
 
   window.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
-    const manifestParam = params.get("manifest");
-    const cidParam = params.get("cid");
-    const gatewayParam = params.get("gateway");
+    // Sanitize: discard over-encoded/invalid URLs instead of letting them
+    // poison every gateway attempt (the cid alone is enough to load a story).
+    const manifestParam = sanitizeHttpUrl(params.get("manifest"));
+    const cidParam = deepDecode(params.get("cid"));
+    const gatewayParam = sanitizeHttpUrl(params.get("gateway"));
 
     const manifestUrl = buildManifestUrl({ manifest: manifestParam, cid: cidParam, gateway: gatewayParam });
     if (!manifestUrl) {
